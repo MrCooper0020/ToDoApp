@@ -22,14 +22,12 @@ void renderUi(int screen, int listPosition, list<TodoItem>* list ) {
 
 	switch (screen) {
 	case 3:
-		//todo Create a screen to create a item
-		//! Warning, is needed pointer to edit the todo list
-		printf("New Item\nname:");
+		printf("New Item\nname: ");
 		cin >> newItem.title;
-		printf("description:");
+		printf("description: ");
 		cin >> newItem.description;
 		(*list).push_back(newItem);
-		printf("\n\nSaved, press space to continue!");
+		printf("\nSaved, press space to continue!");
 		break;
 	case 2:
 		printf("ToDo list:\n");
@@ -87,20 +85,19 @@ int main() {
 
 			if (GetKeyState(0x26) & 0x8000) {
 				if ((listPosition + 1) < toDos.size()) {
-					listPosition = listPosition + 1;
+					listPosition = listPosition++;
 					actualScreen = 0;
 				}
 			}
 
 			if (GetKeyState(0x28) & 0x8000) {
 				if ((listPosition - 1) >= 0) {
-					listPosition = listPosition - 1;
+					listPosition = listPosition--;
 					actualScreen = 0;
 				}
 			}
 
 			if (GetKeyState(0x44) & 0x8000) {
-				//! is needed to recreate the todo list with pointers to make possible to make changes in each item!
 				int index = 0;
 				for (TodoItem item : toDos){
 					if (index == listPosition) {
