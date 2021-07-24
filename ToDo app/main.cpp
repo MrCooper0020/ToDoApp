@@ -14,25 +14,55 @@ struct TodoItem
 	bool isFinished = false;
 };
 
-void renderUi(int screen, int listPosition, list<TodoItem>* list ) {
+void changeStatus(bool tgStatus, int tgPosition, list<TodoItem*>* list) {
 	int index = 0;
-	TodoItem newItem;
+	for (TodoItem* item : *list) {
+		if (index == tgPosition) {
+			(*item).isFinished = tgStatus;
+		}
+
+		index = index++;
+	}
+};
+
+bool createItem(string title, string description, list<TodoItem*>* list) {
+	try {
+		TodoItem newItem;
+		newItem.title = title;
+		newItem.description = description;
+		(*list).push_back(&newItem);
+		return true;
+	}
+	catch (...) {
+		throw;
+	}
+};
+
+void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
+	int index = 0;
+	string title = "";
+	string description = "";
 
 	system("cls");
 
 	switch (screen) {
 	case 3:
-		printf("New Item\nname: ");
-		cin >> newItem.title;
+		printf("New Item\ntitle: ");
+		cin >> title;
 		printf("description: ");
-		cin >> newItem.description;
-		(*list).push_back(newItem);
-		printf("\nSaved, press space to continue!");
+		cin >> description;
+
+		if (createItem(title, description, list)) {
+			printf("\nSaved, press space to continue!");
+		}
+		else {
+			printf("\nError: something wrong happened!");
+		}
 		break;
 	case 2:
 		printf("ToDo list:\n");
-		for (TodoItem item : *list){
-			printf("    %s - %s %s", item.title.c_str(), (item.isFinished ? "done" : "pending"), (listPosition == index ? "<-\n" : "\n"));
+		for (TodoItem* item : *list) {
+			printf("    %s - %s %s", (*item).title.c_str(), ((*item).isFinished ? "done" : "pending"), (listPosition == index ? "<-\n" : "\n"));
 			index = index++;
 		}
 		printf("\n\nCommands: D - change status to done, P - change status to pending, N - new item");
@@ -41,13 +71,13 @@ void renderUi(int screen, int listPosition, list<TodoItem>* list ) {
 		printf("Welcome to ToDo app!\n\nPress space key to continue!\n\nMade by Matheus H. Potrich");
 		break;
 	}
-}
+};
 
 int main() {
 	int actualScreen = 0;
 	int screenPostion = 1;
 	int listPosition = 0;
-	list<TodoItem> toDos;
+	list<TodoItem*> toDos;
 
 	TodoItem newItem;
 	newItem.title = "Teste 1";
@@ -59,12 +89,12 @@ int main() {
 	newItemT.description = "This is a test!";
 	newItemT.isFinished = false;
 
-	toDos.push_back(newItem);
-	toDos.push_back(newItemT);
+	toDos.push_back(&newItem);
+	toDos.push_back(&newItemT);
 
 	while (true) {
 		//! verify if the screen is rended, if not will render the screen
-		if (actualScreen != screenPostion){
+		if (actualScreen != screenPostion) {
 			renderUi(screenPostion, listPosition, &toDos);
 
 			//x On press debug
@@ -73,8 +103,8 @@ int main() {
 			actualScreen = screenPostion;
 		}
 
-		if (screenPostion == 1){
-			if (GetKeyState(0x20) & 0x8000){
+		if (screenPostion == 1) {
+			if (GetKeyState(0x20) & 0x8000) {
 				screenPostion = 2;
 			}
 		}
@@ -98,14 +128,12 @@ int main() {
 			}
 
 			if (GetKeyState(0x44) & 0x8000) {
-				int index = 0;
-				for (TodoItem item : toDos){
-					if (index == listPosition) {
-						item.isFinished = true;
-					}
+				changeStatus(true, listPosition, &toDos);
+				actualScreen = 0;
+			}
 
-					index = index++;
-				}
+			if (GetKeyState(0x50) & 0x8000) {
+				changeStatus(false, listPosition, &toDos);
 				actualScreen = 0;
 			}
 
@@ -123,4 +151,4 @@ int main() {
 	}
 
 	return 0;
-}
+};
