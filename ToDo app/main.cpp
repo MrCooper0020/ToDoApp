@@ -38,6 +38,27 @@ bool createItem(string title, string description, list<TodoItem*>* list) {
 	}
 };
 
+bool editItem(int position, string newTitle, string newDescription, list<TodoItem*>* list) {
+	try {
+		int index = 0;
+
+		for (TodoItem* item : *list) {
+			if (position == index) {
+				item->title = newTitle;
+				item->description = newDescription;
+				break;
+			}
+
+			index = index++;
+		}
+
+		return true;
+	}
+	catch (...) {
+		throw;
+	}
+}
+
 void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 	int index = 0;
 	string title = "";
@@ -46,6 +67,19 @@ void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 	system("cls");
 
 	switch (screen) {
+	case 4:
+		printf("Edit Item\ntitle: ");
+		cin >> title;
+		printf("description: ");
+		cin >> description;
+
+		if (editItem(listPosition, title, description, list)) {
+			printf("\nSaved, press space to continue!");
+		}
+		else {
+			printf("\nError: something wrong happened!");
+		}
+		break;
 	case 3:
 		printf("New Item\ntitle: ");
 		cin >> title;
@@ -65,7 +99,7 @@ void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 			printf("    %s - %s %s", (*item).title.c_str(), ((*item).isFinished ? "done" : "pending"), (listPosition == index ? "<-\n" : "\n"));
 			index = index++;
 		}
-		printf("\n\nCommands: D - change status to done, P - change status to pending, N - new item");
+		printf("\n\nCommands: D - change status to done, P - change status to pending, N - new item, E - edit item");
 		break;
 	default:
 		printf("Welcome to ToDo app!\n\nPress space key to continue!\n\nMade by Matheus H. Potrich");
@@ -140,8 +174,12 @@ int main() {
 			if (GetKeyState(0x4E) & 0x8000) {
 				screenPostion = 3;
 			}
+
+			if (GetKeyState(0x45) & 0x8000) {
+				screenPostion = 4;
+			}
 		}
-		else if (screenPostion == 3) {
+		else if (screenPostion == 3 || screenPostion == 4) {
 			if (GetKeyState(0x20) & 0x8000) {
 				screenPostion = 2;
 			}
