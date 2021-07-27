@@ -68,10 +68,10 @@ void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 
 	switch (screen) {
 	case 4:
-		printf("Edit Item\ntitle: ");
-		cin >> title;
+		printf("========Edit Item========\ntitle: ");
+		getline(cin, title);
 		printf("description: ");
-		cin >> description;
+		getline(cin, description);
 
 		if (editItem(listPosition, title, description, list)) {
 			printf("\nSaved, press space to continue!");
@@ -81,10 +81,10 @@ void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 		}
 		break;
 	case 3:
-		printf("New Item\ntitle: ");
-		cin >> title;
+		printf("========New Item========\ntitle: ");
+		getline(cin, title);
 		printf("description: ");
-		cin >> description;
+		getline(cin, description);
 
 		if (createItem(title, description, list)) {
 			printf("\nSaved, press space to continue!");
@@ -94,9 +94,9 @@ void renderUi(int screen, int listPosition, list<TodoItem*>* list) {
 		}
 		break;
 	case 2:
-		printf("ToDo list:\n");
+		printf("========ToDo list:========\n");
 		for (TodoItem* item : *list) {
-			printf("    %s - %s %s", (*item).title.c_str(), ((*item).isFinished ? "done" : "pending"), (listPosition == index ? "<-\n" : "\n"));
+			printf("|%s: %s - %s %s|\n", (*item).title.c_str(), (*item).description.c_str(), ((*item).isFinished ? "done" : "pending"), (listPosition == index ? "<-" : ""));
 			index = index++;
 		}
 		printf("\n\nCommands: D - change status to done, P - change status to pending, N - new item, E - edit item");
@@ -130,10 +130,6 @@ int main() {
 		//! verify if the screen is rended, if not will render the screen
 		if (actualScreen != screenPostion) {
 			renderUi(screenPostion, listPosition, &toDos);
-
-			//x On press debug
-			//printf("\n\nList position: %i\n\n", listPosition);
-
 			actualScreen = screenPostion;
 		}
 
